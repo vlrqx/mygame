@@ -1,4 +1,4 @@
-const { User } = require('../../db/models/');
+const { User,Score } = require('../../db/models/');
 const bcrypt = require('bcrypt');
 
 class AuthService {
@@ -48,7 +48,7 @@ class AuthService {
   }
 
   static findOne (id){
-    return User.findByPk(id)
+    return Score.findAll({where:{userId: id}})
   }
 }
 

@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { UserState } from "../types/schema";
-import { fetchUser, loginUser, logoutUser, registerUser } from "./userThunk";
+import { fetchUser, loginUser, logoutUser, registerUser, scoreUser } from "./userThunk";
 
 const initialState: UserState = {
   status: "loading",
   user: null,
   error: null,
+  score: null,
 };
 
 const userSlice = createSlice({
@@ -16,12 +17,11 @@ const userSlice = createSlice({
     builder
       .addCase(registerUser.pending, (state) => {
         state.status = "loading";
-        state.user = null;
         state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.status = "loading";
-        state.user = null;
+        state.user = action.payload.user;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -33,7 +33,6 @@ const userSlice = createSlice({
     builder
       .addCase(logoutUser.pending, (state) => {
         state.status = "loading";
-        state.user = null;
         state.error = null;
       })
       .addCase(logoutUser.fulfilled, (state) => {
@@ -49,7 +48,6 @@ const userSlice = createSlice({
     builder
       .addCase(fetchUser.pending, (state) => {
         state.status = "loading";
-        state.user = null;
         state.error = null;
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
@@ -62,6 +60,22 @@ const userSlice = createSlice({
         state.user = null;
         state.error = action.error.message ?? "Ошибка при обновлении токена";
       });
+
+      builder
+        .addCase(scoreUser.pending, (state) => {
+          state.status = "loading";
+          state.error = null;
+        })
+        .addCase(scoreUser.fulfilled, (state, action) => {
+          state.status = "logged";
+          state.score = action.payload.user;
+          state.error = null;
+        })
+        .addCase(scoreUser.rejected, (state, action) => {
+          state.status = "guest";
+          state.score = null;
+          state.error = action.error.message ?? "Ошибка при обновлении токена";
+        });
   },
 });
 

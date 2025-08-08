@@ -30,8 +30,15 @@ export const UserLoginSchema = z.object({
 
 export type UserLogin = z.infer<typeof UserLoginSchema>;
 
+export const UserScoreSchema = z.object({
+  score: z.number().min(0, "Не верный ответ"),
+});
+
+export type UserScore = z.infer<typeof UserScoreSchema>;
+
 export type UserState = {
   status: "loading" | "guest" | "logged";
   user: User | null;
   error: string | null;
+  score: UserScore | null;
 };
