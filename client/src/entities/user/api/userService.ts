@@ -26,10 +26,11 @@ export class UserService {
   static async login(formData: UserLogin) {
     try {
       const response = await axiosInstance.post<UserResponse>(
-        "/auth/login",
+        "/auth/signin",
         formData
       );
       const validData = UserResponseSchema.parse(response.data);
+      console.log(validData)
       return validData;
     } catch (error) {
       if (error instanceof Error) {
@@ -53,6 +54,19 @@ export class UserService {
   static async refresh() {
     try {
       const response = await axiosInstance.get<UserResponse>("auth/refresh");
+      const validData = UserResponseSchema.parse(response.data);
+      return validData;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      throw error;
+    }
+  }
+
+  static async findOne(id: number) {
+    try {
+      const response = await axiosInstance.get<UserResponse>(`/auth/${id}`);
       const validData = UserResponseSchema.parse(response.data);
       return validData;
     } catch (error) {

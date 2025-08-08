@@ -1,9 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UserService } from "../api/userService";
-import type { UserLogin, UserRegister } from "../types/schema";
+import type { UserLogin, UserRegister, UserScore } from "../types/schema";
 
 export const fetchUser = createAsyncThunk("user/fetchUser", async () => {
   const user = await UserService.refresh();
+  console.log(user)
   return user;
 });
 
@@ -26,4 +27,15 @@ export const registerUser = createAsyncThunk(
     const user = await UserService.signUp(formData);
     return user;
   }
+
+  
+);
+export const scoreUser = createAsyncThunk(
+  "user/scoreUser",
+  async (id: UserScore) => {
+    const user = await UserService.findOne(id);
+    return user;
+  }
+
+  
 );
