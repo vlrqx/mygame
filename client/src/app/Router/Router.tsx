@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 // import { Toaster } from "@/shared/components/ui/toaster";
 import { Toaster as Sonner } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
@@ -11,29 +11,42 @@ import Game from "@/pages/Game";
 // import Profile from "@/pages/Profile";
 import Navbar from "@/shared/components/layout/Navbar";
 import { StoreProvider } from "../StoreProvider";
+import Register from "@/pages/Register";
+import Login from "@/pages/Login";
+import ProtectedRouter from "./ProtectedRouter";
 
 const queryClient = new QueryClient();
 
 export default function Router() {
   return (
     <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <StoreProvider>
-        <TooltipProvider>
-          {/* <Toaster /> */}
-          <Sonner />
-          <BrowserRouter>
-            {/* <Navbar /> */}
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/game" element={<Game />} />
-              {/* <Route path="/profile" element={<Profile />} /> */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </StoreProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
-  )
+      <HelmetProvider>
+        <StoreProvider>
+          <TooltipProvider>
+            {/* <Toaster /> */}
+            <Sonner />
+            <BrowserRouter>
+              {/* <Navbar /> */}
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/game" element={<Game />} />
+                {/* <Route path="/profile" element={<Profile />} /> */}
+                <Route
+                  element={
+                    <ProtectedRouter
+                      allowedStatuses={["loading", "guest"]}
+                      redirectTo="/"
+                    />
+                  }
+                ></Route>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </StoreProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
+  );
 }
