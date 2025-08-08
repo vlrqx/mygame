@@ -28,7 +28,7 @@ export const UserLoginSchema = z.object({
   password: z.string().min(6, "Пароль должен содержать не менее 6 символов"),
 });
 
-export type UserLogin = z.einfer<typeof UserLoginSchema>;
+export type UserLogin = z.infer<typeof UserLoginSchema>;
 
 export type UserState = {
   status: "loading" | "guest" | "logged";
