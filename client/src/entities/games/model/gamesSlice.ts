@@ -13,6 +13,7 @@ type GamesState = {
     name?: string;
     points?: number;
     answer?: string;
+    isClosed?: boolean;
   };
   timerId: NodeJS.Timeout | null;
   answer: string;
@@ -22,7 +23,7 @@ type GamesState = {
 const initialState: GamesState = {
   games: [],
   isModal: false,
-  question: { id: null, name: "", points: null, answer: "" },
+  question: { id: null, name: "", points: null, answer: "", isClosed: false },
   timerId: null,
   answer: "",
   isCorrecctAnswer: null,
@@ -51,6 +52,7 @@ const slice = createSlice({
         name?: string;
         points?: number;
         answer?: string;
+        isClosed?: boolean;
       }>
     ) {
       state.question = action.payload;
@@ -66,6 +68,24 @@ const slice = createSlice({
 
     isCorrecctAnswer(state, action: PayloadAction<boolean | null>) {
       state.isCorrecctAnswer = action.payload;
+    },
+
+    closeQuestion(
+      state,
+      action: PayloadAction<{ themeId: number; questionId: number }>
+    ) {
+      const { themeId, questionId } = action.payload;
+      const theme = state.games.find((t) => t.id === themeId);
+      if (theme) {
+        const question = theme.Questions.find((q) => q.id === questionId);
+        if (question) {
+          question.isClosed = true;
+        }
+      }
+    },
+
+    setGamesWithClosed(state, action: PayloadAction<GamesList>) {
+      state.games = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -86,5 +106,7 @@ export const {
   setTimerId,
   setAnswer,
   isCorrecctAnswer,
+  closeQuestion,
+  setGamesWithClosed,
 } = slice.actions;
 export default slice.reducer;

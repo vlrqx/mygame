@@ -23,6 +23,11 @@ import { fetchGames } from "@/entities/games/model/gamesThunks";
 import QuestionModal from "@/features/Question/ui/QuestionModal";
 import { set } from "date-fns";
 import AnswerFeedback from "@/features/Question/ui/Feedback";
+import {
+  loadGamesWithLocalStorage,
+  closeQuestionAndSave,
+  resetGameAndStorage,
+} from "@/entities/games/model/gamesThunks";
 
 const Game = (): React.JSX.Element => {
   const dispatch = useAppDispatch();
@@ -32,6 +37,25 @@ const Game = (): React.JSX.Element => {
   useEffect(() => {
     void dispatch(fetchGames());
   }, [dispatch]);
+
+  useEffect(() => {
+    // Загрузка с localStorage или API
+    void dispatch(loadGamesWithLocalStorage());
+  }, [dispatch]);
+
+  const handleQuestionClick = (
+    themeId: number,
+    questionId: number,
+    question
+  ) => {
+    dispatch(setIsModal(true)); // (поддержка вашего setIsModal, сейчас принимает boolean?)
+    const timerId = setTimeout(() => dispatch(setModalFalse()), 20000);
+    dispatch(setQuestion(question));
+    dispatch(setTimerId(timerId));
+
+    // Закрываем вопрос (ставим isClosed = true и сохраняем)
+    dispatch(closeQuestionAndSave(themeId, questionId));
+  };
 
   const sortedGames = useMemo(() => {
     return {
@@ -81,21 +105,22 @@ const Game = (): React.JSX.Element => {
                   const question = theme.Questions[rowIndex];
                   return (
                     <td key={`${theme.id}-${rowIndex}`} className="border p-0">
-                      <Button
-                        className="w-full h-16 rounded-none"
-                        aria-label={`Вопрос на ${question.points} по теме ${theme.name}`}
-                        onClick={() => {
-                          dispatch(setIsModal());
-                          const timerId = setTimeout(
-                            () => dispatch(setModalFalse()),
-                            20000
-                          );
-                          dispatch(setQuestion(question));
-                          dispatch(setTimerId(timerId));
-                        }}
-                      >
-                        {question.points}
-                      </Button>
+                      {question.isClosed ? (
+                        // Закрытый вопрос - белая клетка с дефисом
+                        <div className="w-full h-16 bg-white border flex items-center justify-center text-gray-400 text-xl">
+                          -
+                        </div>
+                      ) : (
+                        <Button
+                          className="w-full h-16 rounded-none"
+                          aria-label={`Вопрос на ${question.points} по теме ${theme.name}`}
+                          onClick={() =>
+                            handleQuestionClick(theme.id, question.id, question)
+                          }
+                        >
+                          {question.points}
+                        </Button>
+                      )}
                     </td>
                   );
                 })}
@@ -104,6 +129,13 @@ const Game = (): React.JSX.Element => {
           </tbody>
         </table>
       </section>
+      <Button
+        onClick={() => dispatch(resetGameAndStorage())}
+        className="mt-6 px-4 py-2 bg-red-500 text-white rounded"
+      >
+        Закончить игру
+      </Button>
+
       <QuestionModal />
       <AnswerFeedback />
     </main>
