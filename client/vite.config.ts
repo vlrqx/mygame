@@ -7,11 +7,7 @@ const root = path.resolve(__dirname, 'src');
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react({
-      babel: {
-        plugins: ['babel-plugin-react-compiler' ]
-      },
-    })],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': root,
