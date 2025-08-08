@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import userReducer from "@/entities/user/modal/slice"
+import gamesReducer from "@/entities/games/model/gamesSlice";
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
+    games: gamesReducer,
   },
 });
 
