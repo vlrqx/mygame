@@ -12,13 +12,22 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
-import { setGames } from "@/entities/games/model/gamesSlice";
+import {
+  setGames,
+  setIsModal,
+  setModalFalse,
+  setQuestion,
+  setTimerId,
+} from "@/entities/games/model/gamesSlice";
 import { fetchGames } from "@/entities/games/model/gamesThunks";
+import QuestionModal from "@/features/Question/ui/QuestionModal";
+import { set } from "date-fns";
+import AnswerFeedback from "@/features/Question/ui/Feedback";
 
 const Game = (): React.JSX.Element => {
   const dispatch = useAppDispatch();
 
-  const games = useAppSelector((state) => state.games);
+  const { games, isModal } = useAppSelector((state) => state.games);
 
   useEffect(() => {
     void dispatch(fetchGames());
@@ -27,11 +36,11 @@ const Game = (): React.JSX.Element => {
   const sortedGames = useMemo(() => {
     return {
       ...games,
-      games: games.games.map(theme => ({
+      games: games.map((theme) => ({
         ...theme,
-        Questions: [...theme.Questions].sort((a, b) => a.id - b.id) // Сортировка по id
+        Questions: [...theme.Questions].sort((a, b) => a.id - b.id), // Сортировка по id
         // Или если хотите сортировать по points: .sort((a, b) => a.points - b.points)
-      }))
+      })),
     };
   }, [games]);
 
@@ -75,6 +84,15 @@ const Game = (): React.JSX.Element => {
                       <Button
                         className="w-full h-16 rounded-none"
                         aria-label={`Вопрос на ${question.points} по теме ${theme.name}`}
+                        onClick={() => {
+                          dispatch(setIsModal());
+                          const timerId = setTimeout(
+                            () => dispatch(setModalFalse()),
+                            20000
+                          );
+                          dispatch(setQuestion(question));
+                          dispatch(setTimerId(timerId));
+                        }}
                       >
                         {question.points}
                       </Button>
@@ -86,33 +104,8 @@ const Game = (): React.JSX.Element => {
           </tbody>
         </table>
       </section>
-
-      {/* {allTaken && (
-        <section className="mt-6 text-center">
-          <p className="text-lg">Игра окончена. Ваш результат: <span className="font-semibold">{score}</span></p>
-        </section>
-      )} */}
-
-      {/* <Dialog open={!!current} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Вопрос на {current?.value}</DialogTitle>
-            <DialogDescription>{current?.question}</DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <Input
-              placeholder="Ваш ответ"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && submit()}
-              autoFocus
-            />
-          </div>
-          <DialogFooter>
-            <Button onClick={submit}>Ответить</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog> */}
+      <QuestionModal />
+      <AnswerFeedback />
     </main>
   );
 };

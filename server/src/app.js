@@ -7,11 +7,10 @@ const userRouter = require('./routes/user.router');
 const chatRouter = require('./routes/chat.router');
 const authRouter = require('./routes/user.router');
 
-
-const app = express(); 
+const app = express();
 
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
