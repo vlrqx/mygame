@@ -29,7 +29,9 @@ const slice = createSlice({
         state.user = action.payload;
         try {
           localStorage.setItem(LS_KEY, JSON.stringify(action.payload));
-        } catch {}
+        } catch {
+          // ignore
+        }
       },
       prepare(name: string) {
         return { payload: { id: crypto.randomUUID(), name } as User };
@@ -39,7 +41,9 @@ const slice = createSlice({
       state.user = null;
       try {
         localStorage.removeItem(LS_KEY);
-      } catch {}
+      } catch {
+        // ignore
+      }
     },
     setUser(state, action: PayloadAction<User | null>) {
       state.user = action.payload;

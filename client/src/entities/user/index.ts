@@ -1,3 +1,3 @@
-export * from "./model/types";
-export * from "./model/selectors";
-export { login, logout } from "./model/slice";
+export * from "./modal/types";
+export * from "./modal/selectors";
+export { login, logout } from "./modal/slice";
