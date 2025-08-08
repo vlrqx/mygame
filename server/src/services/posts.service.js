@@ -1,8 +1,11 @@
-const { Restaurant, User } = require("../../db/models");
+const { Theme, Question,User } = require("../../db/models");
 
 class PostsService {
   static async getAll() {
-    return await Restaurant.findAll();
+    return await Theme.findAll({include: [{
+      model: Question,
+      attributes: ['id', 'name', 'answer', 'points'] 
+    }]});
   }
 
   static async getPostsByUser(userId) {
